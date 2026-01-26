@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/1.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
 </head>
 <body>
-    <div id="userInfo" style="text-align:right; padding:10px;"></div>
+    <div id="userInfo" style="text-align:right; padding:10px;">
+        Админ | <a href="/">На главную</a> | <button id="logoutBtn">Выход</button>
+    </div>
     
     <h2 style="text-align:center;">Управление статьями (Админ)</h2>
+    
     <div id="adminContent">
         <% if (typeof data !== 'undefined') { %>
             <% data.forEach(function(item) { %>
@@ -19,6 +21,7 @@
         <% } %>
     </div>
 
+    <!-- Твоя форма добавления статьи (без изменений) -->
     <div class="form">
         <h2>Добавить статью</h2>
         <form action="http://localhost:3000/admin/addArticle" method="post"> 
@@ -37,41 +40,13 @@
     </div>
 
     <script>
-        $(document).ready(async function() {
-            const token = Cookies.get("reg");
-            if (!token || !Cookies.get("logged")) {
-                window.location = '/reg';
-                return;
-            }
-
-            try {
-                const response = await fetch('/reg/checkTokenAdmin', {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token })
-                });
-
-                if (!response.ok) {
-                    window.location = '/403.html';
-                    return;
-                }
-                
-                const login = Cookies.get("login");
-                $("#userInfo").html(`
-                    Админ: ${login} | <a href="/">На главную</a> | <button id="logoutBtn">Выход</button>
-                `);
-
-                $("#logoutBtn").click(function(){
-                    Cookies.remove("reg");
-                    Cookies.remove("login");
-                    Cookies.remove("logged");
-                    window.location = '/reg';
-                });
-
-            } catch (error) {
-                window.location = '/403.html';
-            }
-        });
+        // Простой скрипт для выхода
+        document.querySelector("#logoutBtn").onclick = function(){
+            Cookies.remove("reg");
+            Cookies.remove("login");
+            Cookies.remove("logged");
+            window.location = '/reg';
+        }
     </script>
 </body>
 </html>
