@@ -19,6 +19,7 @@
 
 ## SQL-запрос для создания базы
 
+```
 CREATE DATABASE article CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE article;
 
@@ -53,3 +54,4 @@ CREATE TABLE user (
 
 INSERT INTO user (login, pwd) VALUES ('admin', 'admin');
 INSERT INTO user (login, pwd) VALUES ('user', 'user');
+```
