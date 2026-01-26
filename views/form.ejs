@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="/css/1.css">
+</head>
+<body>
+    <h2 align="center">Регистрация/Логин</h2>
+    <div class="group" style="max-width: 300px; margin: 0 auto;">
+        <label>Логин:</label>
+        <input id="login" name="username" class="form-input" style="width:100%">
+        
+        <label style="margin-top:10px; display:block">Пароль:</label>
+        <input type="password" id="password" name="password" class="form-input" style="width:100%">
+    </div>
+    <div id="message" style="text-align:center; color:red; margin: 10px;"></div>
+    
+    <div style="text-align:center; margin-top: 20px;">
+        <button id="reg">Регистрация</button>
+        <button id="auth">Логин</button>
+    </div>
+
+    <script>
+        // Обработка Логина
+        $("#auth").click(async function(e) {
+            e.preventDefault();
+            const login = document.getElementById("login").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch('http://localhost:3000/reg/auth', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    body: JSON.stringify({ login, password })
+                });
+                const result = await response.json();
+
+                if (result.logged) {
+                    Cookies.set("reg", result.token);
+                    Cookies.set("login", result.userData.login);
+                    Cookies.set("logged", true);
+                    window.location = '/';
+                } else {
+                    $("#message").text(result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                $("#message").text("Ошибка подключения");
+            }
+        });
+
+        // Обработка Регистрации
+        $("#reg").click(async function(e) {
+            e.preventDefault();
+            const login = document.getElementById("login").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch('http://localhost:3000/reg/reg', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    body: JSON.stringify({ login, password })
+                });
+                const result = await response.json();
+
+                if (result.logged) {
+                    Cookies.set("reg", result.token);
+                    Cookies.set("login", result.userData.login);
+                    Cookies.set("logged", true);
+                    window.location = '/';
+                } else {
+                    $("#message").text(result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                $("#message").text("Ошибка подключения");
+            }
+        });
+    </script>
+</body>
+</html>

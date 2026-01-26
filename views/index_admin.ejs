@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/1.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+</head>
+<body>
+    <div id="userInfo" style="text-align:right; padding:10px;"></div>
+    
+    <h2 style="text-align:center;">Управление статьями (Админ)</h2>
+    <div id="adminContent">
+        <% if (typeof data !== 'undefined') { %>
+            <% data.forEach(function(item) { %>
+            <p id="articlesTitle"><a href='http://localhost:3000/admin/<%= item.idArticle %>'><%= item.titleArticle %> </a></p>
+            <p id="articlesDescription"><%= item.descriptionArticle %></p>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <div class="form">
+        <h2>Добавить статью</h2>
+        <form action="http://localhost:3000/admin/addArticle" method="post"> 
+            <label for="titleArticle">Название статьи</label> 
+            <input type="text" name="titleArticle" id="titleArticle" required> 
+            <p>
+                <label for="textArticle">Текст статьи</label>
+                <textarea rows="10" cols="30" id="textArticle" name="textArticle"></textarea> 
+            </p> 
+            <p>
+                <label for="descriptionArticle">Описание статьи</label>
+                <input type="text" name="descriptionArticle" id="descriptionArticle">
+            </p>
+            <button type="submit" id="sendArticle">Создать статью</button> 
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(async function() {
+            const token = Cookies.get("reg");
+            if (!token || !Cookies.get("logged")) {
+                window.location = '/reg';
+                return;
+            }
+
+            try {
+                const response = await fetch('/reg/checkTokenAdmin', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                });
+
+                if (!response.ok) {
+                    window.location = '/403.html';
+                    return;
+                }
+                
+                const login = Cookies.get("login");
+                $("#userInfo").html(`
+                    Админ: ${login} | <a href="/">На главную</a> | <button id="logoutBtn">Выход</button>
+                `);
+
+                $("#logoutBtn").click(function(){
+                    Cookies.remove("reg");
+                    Cookies.remove("login");
+                    Cookies.remove("logged");
+                    window.location = '/reg';
+                });
+
+            } catch (error) {
+                window.location = '/403.html';
+            }
+        });
+    </script>
+</body>
+</html>

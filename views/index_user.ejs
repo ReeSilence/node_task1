@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link rel="stylesheet" href="/css/1.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+</head>
+<body>
+    <div style="text-align:right; padding:10px; border-bottom: 1px solid #ccc;">
+        <span id="userInfo">Загрузка...</span>
+    </div>
+
+    <h2 style="text-align:center;">Статьи</h2>
+    <div id="content">
+        <% if (typeof data !== 'undefined') { %>
+            <% data.forEach(function(item) { %>
+            <p id="articlesTitle"><a href='http://localhost:3000/article/<%= item.idArticle %>'><%= item.titleArticle %> </a></p>
+            <p id="articlesDescription"><%= item.descriptionArticle %></p>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <p style="text-align:center;"><a href="/news">Смотреть новости</a></p>
+
+    <script>
+        $(document).ready(async function() {
+            const token = Cookies.get("reg");
+            const logged = Cookies.get("logged");
+
+            if (!token || !logged) {
+                // Нет токена? Иди регистрироваться
+                window.location = '/reg';
+            } else {
+                // Проверяем токен
+                try {
+                    const response = await fetch('/reg/checkToken', {
+                        method: "POST",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: token })
+                    });
+                    
+                    if (!response.ok) throw new Error("Invalid");
+
+                    const result = await response.json();
+                    const login = Cookies.get("login");
+                    
+                    $("#userInfo").html(`
+                        Привет, ${login} | 
+                        <a href="/admin" style="margin-right:10px;">Панель админа</a>
+                        <button id="logoutBtn" style="padding:2px 5px;">Выход</button>
+                    `);
+
+                    $("#logoutBtn").click(function(){
+                        Cookies.remove("reg");
+                        Cookies.remove("login");
+                        Cookies.remove("logged");
+                        window.location = '/reg';
+                    });
+
+                } catch (error) {
+                    window.location = '/reg';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
