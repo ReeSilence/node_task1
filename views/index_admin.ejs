@@ -21,7 +21,6 @@
         <% } %>
     </div>
 
-    <!-- Твоя форма добавления статьи (без изменений) -->
     <div class="form">
         <h2>Добавить статью</h2>
         <form action="http://localhost:3000/admin/addArticle" method="post"> 
@@ -40,7 +39,6 @@
     </div>
 
     <script>
-        // Простой скрипт для выхода
         document.querySelector("#logoutBtn").onclick = function(){
             Cookies.remove("reg");
             Cookies.remove("login");
